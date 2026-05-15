@@ -1,0 +1,223 @@
+{
+  "info": {
+    "name": "API Películas — Semana 7",
+    "description": "Colección completa para la API de Películas con autenticación JWT, Prisma ORM, e integración con IA.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Registro",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/registro", "host": ["{{baseUrl}}"], "path": ["api", "auth", "registro"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Admin\",\n  \"email\": \"admin@cine.com\",\n  \"password\": \"admin123\",\n  \"rol\": \"admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('token', res.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@cine.com\",\n  \"password\": \"admin123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Perfil",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/perfil", "host": ["{{baseUrl}}"], "path": ["api", "auth", "perfil"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Películas",
+      "item": [
+        {
+          "name": "Listar películas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/peliculas?genero=drama&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "peliculas"],
+              "query": [
+                { "key": "genero", "value": "drama" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener película por ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/peliculas/1", "host": ["{{baseUrl}}"], "path": ["api", "peliculas", "1"] }
+          }
+        },
+        {
+          "name": "Crear película",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/peliculas", "host": ["{{baseUrl}}"], "path": ["api", "peliculas"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Dune\",\n  \"anio\": 2021,\n  \"nota\": 8.0,\n  \"director\": \"Denis Villeneuve\",\n  \"genero\": \"ciencia-ficcion\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar película",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/peliculas/1", "host": ["{{baseUrl}}"], "path": ["api", "peliculas", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Dune: Part Two\",\n  \"anio\": 2024,\n  \"nota\": 8.5\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar película",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/peliculas/1", "host": ["{{baseUrl}}"], "path": ["api", "peliculas", "1"] }
+          }
+        },
+        {
+          "name": "Obtener reseñas de película",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/peliculas/1/resenas", "host": ["{{baseUrl}}"], "path": ["api", "peliculas", "1", "resenas"] }
+          }
+        },
+        {
+          "name": "Crear reseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/peliculas/1/resenas", "host": ["{{baseUrl}}"], "path": ["api", "peliculas", "1", "resenas"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autor\": \"Usuario Test\",\n  \"texto\": \"Excelente película\",\n  \"puntuacion\": 9\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favoritos",
+      "item": [
+        {
+          "name": "Listar favoritos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/favoritos", "host": ["{{baseUrl}}"], "path": ["api", "favoritos"] }
+          }
+        },
+        {
+          "name": "Añadir favorito",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/favoritos/1", "host": ["{{baseUrl}}"], "path": ["api", "favoritos", "1"] }
+          }
+        },
+        {
+          "name": "Quitar favorito",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/favoritos/1", "host": ["{{baseUrl}}"], "path": ["api", "favoritos", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Estadísticas",
+      "item": [
+        {
+          "name": "Estadísticas por director",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/estadisticas/directores", "host": ["{{baseUrl}}"], "path": ["api", "estadisticas", "directores"] }
+          }
+        },
+        {
+          "name": "Estadísticas por género",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/estadisticas/generos", "host": ["{{baseUrl}}"], "path": ["api", "estadisticas", "generos"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "IA",
+      "item": [
+        {
+          "name": "Recomendar películas (IA)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/ia/recomendar", "host": ["{{baseUrl}}"], "path": ["api", "ia", "recomendar"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"generos\": [\"ciencia-ficcion\", \"drama\"],\n  \"nota_minima\": 7.5,\n  \"excluir_ids\": [1, 3],\n  \"limite\": 5\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
